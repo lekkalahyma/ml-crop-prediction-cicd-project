@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Crop Prediction</title>
+</head>
+<body>
+<h1>Crop Prediction Form</h1>
+<form action="/predict" method="post">
+N: <input type="number" name="N"><br>
+P: <input type="number" name="P"><br>
+K: <input type="number" name="K"><br>
+Temperature: <input type="number" step="0.1" name="temperature"><br>
+Humidity: <input type="number" step="0.1" name="humidity"><br>
+pH: <input type="number" step="0.1" name="ph"><br>
+Rainfall: <input type="number" step="0.1" name="rainfall"><br>
+<button type="submit">Predict</button>
+</form>
+</body>
+</html>

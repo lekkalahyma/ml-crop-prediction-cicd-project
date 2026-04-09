@@ -1,0 +1,40 @@
+name: CI/CD MLOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install -r fastapi/requirements.txt
+
+    - name: Train Model
+      run: |
+        python mlflow/train_model.py
+
+    - name: Build and Run Docker Compose
+      run: |
+        docker-compose up --build -d
+
+    - name: Wait and Test FastAPI
+      run: |
+        sleep 15
+        curl http://localhost:9000 || exit 1
+
+    - name: Test MLflow UI
+      run: |
+        curl http://localhost:5000 || exit 1

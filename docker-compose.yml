@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.22.4
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+      - ./mlflow_models:/mlflow_models
+    command: mlflow server --backend-store-uri /mlruns --default-artifact-root /mlruns --host 0.0.0.0 --port 5000
+
+  fastapi:
+    build: ./fastapi
+    container_name: fastapi
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./fastapi:/app                  # app.py + requirements
+      - ./fastapi_templates:/app/templates  # index.html
+      - ./mlflow_models/crop_model.pkl:/app/crop_model.pkl            # crop_model.pkl
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
