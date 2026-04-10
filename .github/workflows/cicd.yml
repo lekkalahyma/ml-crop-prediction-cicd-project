@@ -1,4 +1,4 @@
-name: Deploy to Local Docker
+name: Deploy to EC2 Docker
 
 on:
   workflow_dispatch:
@@ -6,14 +6,29 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Trigger local server via SSH
+      - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.LOCAL_HOST }}
-          username: ${{ secrets.LOCAL_USER }}
-          key: ${{ secrets.LOCAL_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/user/mlops-crop-prediction-cicd-project
+            set -e
+
+            # Go to project OR clone if not exists
+            if [ ! -d "/home/ubuntu/mlops-crop-prediction-cicd-project" ]; then
+              git clone https://github.com/lekkalahyma/mlops-crop-prediction-cicd-project.git /home/ubuntu/mlops-crop-prediction-cicd-project
+            fi
+
+            cd /home/ubuntu/mlops-crop-prediction-cicd-project
+
+            # Pull latest code
             git pull origin main
-            docker-compose up --build -d
+
+            # Stop old containers
+            docker compose down || true
+
+            # Build and run new containers
+            docker compose up --build -d
