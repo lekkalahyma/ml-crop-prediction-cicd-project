@@ -19,7 +19,7 @@ jobs:
 
             # Go to project OR clone if not exists
             if [ ! -d "/home/ubuntu/mlops-crop-prediction-cicd-project" ]; then
-              git clone https://${GH_TOKEN}@github.com/lekkalahyma/mlops-crop-prediction-cicd-project.git /home/ubuntu/mlops-crop-prediction-cicd-project
+              git clone https://github.com/lekkalahyma/mlops-crop-prediction-cicd-project.git
             fi
 
             cd /home/ubuntu/mlops-crop-prediction-cicd-project
