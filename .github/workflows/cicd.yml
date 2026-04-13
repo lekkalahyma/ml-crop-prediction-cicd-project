@@ -14,21 +14,29 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           script: |
             set -e
 
-            # Go to project OR clone if not exists
+            echo "Starting deployment..."
+
+            # Move to home directory
+            cd /home/ubuntu
+
+            # Clone repo if not exists
             if [ ! -d "mlops-crop-prediction-cicd-project" ]; then
-              git clone https://github.com/lekkalahyma/ml-crop-prediction-cicd-project.git
+              git clone https://github.com/lekkalahyma/mlops-crop-prediction-cicd-project.git
             fi
 
-            cd /home/ubuntu/mlops-crop-prediction-cicd-project
+            cd mlops-crop-prediction-cicd-project
 
-            # Pull latest code
+            # Ensure latest code
             git pull origin main
 
-            # Stop old containers
+            echo "Stopping old containers..."
             docker compose down || true
 
-            # Build and run new containers
+            echo "Building and starting containers..."
             docker compose up --build -d
+
+            echo "Deployment completed successfully!"
