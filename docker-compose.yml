@@ -19,7 +19,7 @@ services:
     volumes:
       - ./fastapi:/app                  # app.py + requirements
       - ./fastapi_templates:/app/templates  # index.html
-      - ./mlflow_models/crop_model.pkl:/app/crop_model.pkl            # crop_model.pkl
+                
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
