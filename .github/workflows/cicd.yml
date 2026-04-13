@@ -24,10 +24,12 @@ jobs:
             cd /home/ubuntu
             mkdir -p ~/.ssh
             ssh-keyscan github.com >> ~/.ssh/known_hosts
+             export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
 
+  
             # Clone repo if not exists
             if [ ! -d "mlops-crop-prediction-cicd-project" ]; then
-              git clone https://github.com/lekkalahyma/mlops-crop-prediction-cicd-project.git
+               git clone git@github.com:lekkalahyma/mlops-crop-prediction-cicd-project.git
             fi
 
             cd mlops-crop-prediction-cicd-project
