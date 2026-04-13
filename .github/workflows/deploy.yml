@@ -1,1 +1,41 @@
-docker
+name: Deploy to EC2 Docker
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            echo "Starting deployment..."
+            # Move to home directory
+            cd /home/ubuntu
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+             export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+  
+            # Clone repo if not exists
+            if [ ! -d "ml-crop-prediction-cicd-project" ]; then
+               git clone git@github.com:lekkalahyma/ml-crop-prediction-cicd-project.git
+            fi
+
+            cd ml-crop-prediction-cicd-project
+
+            # Ensure latest code
+            git pull origin main
+
+            echo "Stopping old containers..."
+            sudo docker-compose down || true
+
+            echo "Building and starting containers..."
+            sudo docker-compose up --build -d
