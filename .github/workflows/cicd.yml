@@ -28,11 +28,11 @@ jobs:
 
   
             # Clone repo if not exists
-            if [ ! -d "mlops-crop-prediction-cicd-project" ]; then
+            if [ ! -d "ml-crop-prediction-cicd-project" ]; then
                git clone git@github.com:lekkalahyma/ml-crop-prediction-cicd-project.git
             fi
 
-            cd mlops-crop-prediction-cicd-project
+            cd ml-crop-prediction-cicd-project
 
             # Ensure latest code
             git pull origin main
