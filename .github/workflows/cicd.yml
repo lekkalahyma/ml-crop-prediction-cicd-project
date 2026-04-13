@@ -18,7 +18,7 @@ jobs:
             set -e
 
             # Go to project OR clone if not exists
-            if [ ! -d "/home/ubuntu/mlops-crop-prediction-cicd-project" ]; then
+            if [ ! -d "mlops-crop-prediction-cicd-project" ]; then
               git clone https://github.com/lekkalahyma/ml-crop-prediction-cicd-project.git
             fi
 
