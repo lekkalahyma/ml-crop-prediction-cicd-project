@@ -38,9 +38,10 @@ jobs:
             git pull origin main
 
             echo "Stopping old containers..."
-            docker-compose down || true
+            sudo docker-compose down || true
+            sudo docker-compose up --build -d
 
             echo "Building and starting containers..."
-            docker-compose up --build -d
+           # docker-compose up --build -d
 
             echo "Deployment completed successfully!"
