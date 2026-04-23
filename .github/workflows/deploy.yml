@@ -17,6 +17,8 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::463436898355:role/action_role
         aws-region: ap-south-1
+    - name: Debug AWS identity
+      run: aws sts get-caller-identity     
 
     # 3. Login to ECR
     - name: Login to Amazon ECR
