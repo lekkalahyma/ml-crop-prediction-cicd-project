@@ -21,6 +21,13 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
+        script: |
+          git clone https://github.com/lekkalahyma/ml-crop-prediction-cicd-project
+          cd ml-crop-prediction-cicd-project
+          git pull
+
+          docker compose down || true
+          docker compose up -d --build
         
     # 2. Checkout code
     - name: Checkout code
@@ -41,12 +48,9 @@ jobs:
     - name: Train Model
       run: |
         python model_train.py
-        script: |
-          git clone https://github.com/lekkalahyma/ml-crop-prediction-cicd-project
-          cd ml-crop-prediction-cicd-project
-          git pull
-          a
+        
+     # a
           
 
-          docker compose down || true
-          docker compose up -d --build
+          # docker compose down || true
+          # docker compose up -d --build
