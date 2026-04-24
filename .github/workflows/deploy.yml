@@ -31,12 +31,12 @@ jobs:
     # 5. Tag image
     - name: Tag image
       run: |
-        docker tag ml-app:latest <account-id>.dkr.ecr.ap-south-1.amazonaws.com/ml-app:latest
+        docker tag ml-app:latest <account-id>.dkr.ecr.us-east-1.amazonaws.com/ml-app:latest
 
     # 6. Push to ECR
     - name: Push image
       run: |
-        docker push <account-id>.dkr.ecr.ap-south-1.amazonaws.com/ml-app:latest
+        docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/ml-app:latest
 
     # 7. Deploy to ECS
     - name: Deploy to ECS
