@@ -12,41 +12,41 @@ jobs:
 
     steps:
 
-    # 1. Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # 2. Setup Python
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-
-    # 3. Install dependencies
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-
-    # 4. 🚀 TRAIN MODEL
-    - name: Train Model
-      run: |
-        python model_train.py
-
-    # 5. Build Docker image
-    - name: Build Docker image
-      run: docker build -t ml-app .
-
-    # 6. Deploy to EC2
+    
+    
+    # 1. Deploy to EC2
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
+        
+    # 2. Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 3. Setup Python
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # 4. Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    # 5. 🚀 TRAIN MODEL
+    - name: Train Model
+      run: |
+        python model_train.py
         script: |
-          cd ml-project || git clone https://github.com/YOUR_REPO.git ml-project
-          cd ml-project
+          git clone https://github.com/lekkalahyma/ml-crop-prediction-cicd-project
+          cd ml-crop-prediction-cicd-project
           git pull
+          a
+          
 
           docker compose down || true
           docker compose up -d --build
