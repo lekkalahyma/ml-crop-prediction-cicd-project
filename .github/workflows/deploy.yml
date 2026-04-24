@@ -1,47 +1,52 @@
-name: Deploy ML App to ECS
+name: ML CI/CD Pipeline
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
+
 jobs:
-  deploy:
+  pipeline:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Get code
+
+    # 1. Checkout code
     - name: Checkout code
       uses: actions/checkout@v3
- 
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v2
+
+    # 2. Setup Python
+    - name: Setup Python
+      uses: actions/setup-python@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRECT_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: Debug AWS identity
-      run: aws sts get-caller-identity     
+        python-version: "3.10"
 
-    # 3. Login to ECR
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
 
-    # 4. Build Docker image
-    - name: Build image
+    # 4. 🚀 TRAIN MODEL
+    - name: Train Model
+      run: |
+        python model_train.py
+
+    # 5. Build Docker image
+    - name: Build Docker image
       run: docker build -t ml-app .
 
-    # 5. Tag image
-    - name: Tag image
-      run: |
-        docker tag ml-app:latest <account-id>.dkr.ecr.us-east-1.amazonaws.com/ml-app:latest
+    # 6. Deploy to EC2
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          cd ml-project || git clone https://github.com/YOUR_REPO.git ml-project
+          cd ml-project
+          git pull
 
-    # 6. Push to ECR
-    - name: Push image
-      run: |
-        docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/ml-app:latest
-
-    # 7. Deploy to ECS
-    - name: Deploy to ECS
-      run: |
-        aws ecs update-service \
-          --cluster my-cluster \
-          --service my-service \
-          --force-new-deployment
+          docker compose down || true
+          docker compose up -d --build
